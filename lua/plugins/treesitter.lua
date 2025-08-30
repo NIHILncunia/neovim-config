@@ -26,6 +26,7 @@ return {
           "vue",
           "json",
           "lua",
+          "sql", -- SQL 파서 추가
         },
         -- 자동 설치 비활성화 (수동 관리)
         auto_install = false,

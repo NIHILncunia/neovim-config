@@ -98,6 +98,7 @@ return {
     require('mason').setup({})
     require('mason-lspconfig').setup({
       ensure_installed = {
+        "tailwindcss",
         "lua_ls",
         "intelephense",
         "ts_ls", -- TypeScript LSP
@@ -106,6 +107,7 @@ return {
         "cssls",
         "vue_ls", -- Volar가 lspconfig에서 vue_ls로 리네임됨
         "jsonls",
+        "sqlls",  -- SQL Language Server
       },
       -- v2에서는 handlers 제거됨 (직접 lspconfig.*.setup 사용)
     })
@@ -191,6 +193,26 @@ return {
     })
     -- (원하시면 vtsls로 교체 가능합니다)
 
+    -- SQL Language Server
+    lspconfig.sqlls.setup({
+      settings = {
+        sqlLanguageServer = {
+          connections = {
+            -- 환경 변수에서 데이터베이스 연결 정보 읽기
+            {
+              name = os.getenv("DB_NAME") or "PostgreSQL",
+              adapter = os.getenv("DB_ADAPTER") or "postgresql",
+              server = os.getenv("DB_HOST") or "localhost",
+              port = tonumber(os.getenv("DB_PORT")) or 5432,
+              database = os.getenv("DB_DATABASE") or "",
+              username = os.getenv("DB_USERNAME") or "",
+              password = os.getenv("DB_PASSWORD") or "",
+            },
+          },
+        },
+      },
+    })
+
     -- nvim-cmp
     local cmp = require('cmp')
     cmp.setup.filetype({ 'css', 'scss', 'less' }, {
@@ -210,7 +232,11 @@ return {
         { name = 'buffer',  keyword_length = 3 },
         { name = 'luasnip', keyword_length = 2 },
       },
-      snippet = { expand = function(args) require('luasnip').lsp_expand(args.body) end },
+      snippet = {
+        expand = function(args)
+          require('luasnip').lsp_expand(args.body)
+        end,
+      },
       formatting = {
         fields = { 'abbr', 'menu', 'kind' },
         format = function(entry, item)
