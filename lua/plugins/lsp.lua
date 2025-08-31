@@ -70,27 +70,29 @@ return {
       callback = function(event)
         local opts = { buffer = event.buf }
         -- K: 함수/변수에 대한 문서 정보 표시 (hover)
-        mapKey("K", vim.lsp.buf.hover, "n", opts)
+        mapKey("K", vim.lsp.buf.hover, "n", vim.tbl_extend('force', { desc = 'LSP: Hover' }, opts))
         -- gd: 정의로 이동 (go to definition)
-        mapKey("gd", vim.lsp.buf.definition, "n", opts)
+        mapKey("gd", vim.lsp.buf.definition, "n", vim.tbl_extend('force', { desc = 'LSP: Go to definition' }, opts))
         -- gD: 선언으로 이동 (go to declaration)
-        mapKey("gD", vim.lsp.buf.declaration, "n", opts)
+        mapKey("gD", vim.lsp.buf.declaration, "n", vim.tbl_extend('force', { desc = 'LSP: Go to declaration' }, opts))
         -- gi: 구현으로 이동 (go to implementation)
-        mapKey("gi", vim.lsp.buf.implementation, "n", opts)
+        mapKey("gi", vim.lsp.buf.implementation, "n",
+          vim.tbl_extend('force', { desc = 'LSP: Go to implementation' }, opts))
         -- go: 타입 정의로 이동 (go to type definition)
-        mapKey("go", vim.lsp.buf.type_definition, "n", opts)
+        mapKey("go", vim.lsp.buf.type_definition, "n", vim.tbl_extend('force', { desc = 'LSP: Go to type' }, opts))
         -- gr: 참조 찾기 (find references)
-        mapKey("gr", vim.lsp.buf.references, "n", opts)
+        mapKey("gr", vim.lsp.buf.references, "n", vim.tbl_extend('force', { desc = 'LSP: References' }, opts))
         -- gs: 함수 시그니처 도움말 표시 (signature help)
-        mapKey("gs", vim.lsp.buf.signature_help, "n", opts)
+        mapKey("gs", vim.lsp.buf.signature_help, "n", vim.tbl_extend('force', { desc = 'LSP: Signature help' }, opts))
         -- gl: 진단 정보를 플로팅 창으로 표시 (diagnostic float)
-        mapKey("gl", vim.diagnostic.open_float, "n", opts)
+        mapKey("gl", vim.diagnostic.open_float, "n", vim.tbl_extend('force', { desc = 'LSP: Show diagnostics' }, opts))
         -- F2: 심볼 이름 변경 (rename symbol)
-        mapKey("<F2>", vim.lsp.buf.rename, "n", opts)
+        mapKey("<F2>", vim.lsp.buf.rename, "n", vim.tbl_extend('force', { desc = 'LSP: Rename symbol' }, opts))
         -- F3: 코드 포맷팅 (format code)
-        mapKey("<F3>", function() vim.lsp.buf.format({ async = true }) end, "n", opts)
+        mapKey("<F3>", function() vim.lsp.buf.format({ async = true }) end, "n",
+          vim.tbl_extend('force', { desc = 'LSP: Format' }, opts))
         -- <leader>ca: 코드 액션 실행 (code actions)
-        mapKey("<leader>ca", vim.lsp.buf.code_action, "n", opts)
+        mapKey("<leader>ca", vim.lsp.buf.code_action, "n", vim.tbl_extend('force', { desc = 'LSP: Code action' }, opts))
       end,
     })
 
@@ -149,27 +151,37 @@ return {
       },
     })
 
-    -- ESLint: 저장 시 Fix
+    -- ESLint: 저장 시 Fix (공식 LSP executeCommand 사용)
+    -- 참고: eslint.applyAllFixes via workspace/executeCommand
+    -- lspconfig 최신 설정과 VSCode ESLint의 codeActionsOnSave(source.fixAll.eslint)에 해당
+    -- refs: nvim-lspconfig eslint config, VSCode ESLint docs
     lspconfig.eslint.setup({
       settings = { workingDirectory = { mode = "auto" } },
       flags = { debounce_text_changes = 150 },
-      on_attach = function(_, bufnr)
+      on_attach = function(client, bufnr)
         local aug = vim.api.nvim_create_augroup("EslintFixOnSave", { clear = false })
         vim.api.nvim_create_autocmd("BufWritePre", {
           group = aug,
           buffer = bufnr,
           callback = function()
-            if vim.fn.exists(":EslintFixAll") == 2 then
-              vim.cmd("silent! EslintFixAll")
-            else
-              local cmd = (vim.fn.executable("eslint_d") == 1) and "eslint_d" or "eslint"
-              if vim.fn.executable(cmd) == 1 then
-                vim.fn.jobstart({ cmd, "--fix", vim.api.nvim_buf_get_name(bufnr) }, {
-                  stdout_buffered = true,
-                  stderr_buffered = true,
-                })
-              end
+            local version = nil
+            if vim.lsp and vim.lsp.util and vim.lsp.util.buf_versions then
+              version = vim.lsp.util.buf_versions[bufnr]
             end
+            client.request(
+              'workspace/executeCommand',
+              {
+                command = 'eslint.applyAllFixes',
+                arguments = {
+                  {
+                    uri = vim.uri_from_bufnr(bufnr),
+                    version = version,
+                  },
+                },
+              },
+              function() end,
+              bufnr
+            )
           end,
         })
       end,
@@ -192,26 +204,6 @@ return {
       filetypes = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'vue' },
     })
     -- (원하시면 vtsls로 교체 가능합니다)
-
-    -- SQL Language Server
-    lspconfig.sqlls.setup({
-      settings = {
-        sqlLanguageServer = {
-          connections = {
-            -- 환경 변수에서 데이터베이스 연결 정보 읽기
-            {
-              name = os.getenv("DB_NAME") or "PostgreSQL",
-              adapter = os.getenv("DB_ADAPTER") or "postgresql",
-              server = os.getenv("DB_HOST") or "localhost",
-              port = tonumber(os.getenv("DB_PORT")) or 5432,
-              database = os.getenv("DB_DATABASE") or "",
-              username = os.getenv("DB_USERNAME") or "",
-              password = os.getenv("DB_PASSWORD") or "",
-            },
-          },
-        },
-      },
-    })
 
     -- nvim-cmp
     local cmp = require('cmp')

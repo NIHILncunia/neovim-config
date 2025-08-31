@@ -13,6 +13,10 @@ local keyMapper = function(from, to, mode, opts)
   -- 추가 옵션이 제공된 경우 기본 옵션과 병합
   -- vim.tbl_extend("force", ...)는 두 번째 테이블의 값으로 첫 번째 테이블을 덮어씀
   if opts then
+    -- 사용자가 문자열 설명만 넘긴 경우 자동으로 desc 옵션으로 변환
+    if type(opts) == "string" then
+      opts = { desc = opts }
+    end
     options = vim.tbl_extend("force", options, opts)
   end
 

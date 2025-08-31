@@ -2,6 +2,8 @@ local mapKey = require('utils.keyMapper').mapKey
 
 -- 파일에서 Ex 안하고 편하게 뒤로 가기
 mapKey("<leader>cd", vim.cmd.Ex)
+mapKey("<C-Z>", "<C-O>u", "i", "Undo in insert mode")
+mapKey("<C-Y>", "<C-O><C-R>", "i", "Redo in insert mode")
 
 -- NeoTree 관련
 mapKey('<leader>e', ':Neotree toggle<cr>', "n") -- 네오트리 토글

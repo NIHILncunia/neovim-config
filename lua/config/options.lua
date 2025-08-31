@@ -25,3 +25,4 @@ opt.encoding = 'utf-8' -- 파일 인코딩
 opt.cmdheight = 1      -- 명령 행 높이
 opt.scrolloff = 10     -- 스크롤 오프셋
 opt.mouse:append('a')  -- 마우스 사용 가능
+opt.hidden = true      -- 저장하지 않아도 버퍼 전환 허용 (BufLeave 에러 방지)
