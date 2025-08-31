@@ -14,6 +14,7 @@ opt.cursorline = true      -- 현재 행 강조
 opt.relativenumber = false -- 상대 행 번호 비활성화
 opt.signcolumn = 'yes'     -- 부가 정보 표시
 opt.termguicolors = true   -- 터미널 색상 사용
+opt.showtabline = 0        -- 탭 라인 비활성화
 
 -- 검색
 opt.incsearch = true  -- 검색어 입력 시 실시간 검색

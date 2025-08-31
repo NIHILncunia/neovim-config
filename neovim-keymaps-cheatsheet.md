@@ -52,6 +52,11 @@
 
 - `<leader>h` - 검색 하이라이트 제거
 
+### 들여쓰기 (Visual 모드)
+
+- `<` - 선택 영역 들여쓰기 감소
+- `>` - 선택 영역 들여쓰기 증가
+
 ## 🚀 LSP (Language Server Protocol)
 
 ### 코드 탐색
@@ -71,6 +76,16 @@
 - `<F3>` - 코드 포맷팅
 - `<leader>ca` - 코드 액션
 
+## 🐞 디버깅 (DAP)
+
+- `<F5>` - Continue
+- `<F10>` - Step Over
+- `<F11>` - Step Into
+- `<F12>` - Step Out
+- `<F9>` - 브레이크포인트 토글
+- `<leader>dB` - 조건부 브레이크포인트 설정
+- `<leader>du` - DAP UI 토글
+
 ## 🗄️ Database (dbee)
 
 - `<leader>db` - DB UI 토글
@@ -80,6 +95,58 @@
 - `[d` - 결과 이전 페이지
 - `g]d` - 결과 마지막 페이지
 - `g[d` - 결과 첫 페이지
+
+## 🧪 테스트 (Neotest)
+
+- `<leader>tn` - 가장 가까운 테스트 실행
+- `<leader>tf` - 현재 파일 테스트 실행
+- `<leader>ts` - 테스트 요약 토글
+- `<leader>to` - 테스트 출력 열기
+- `<leader>tt` - 실행 중 테스트 중지
+
+## 📦 태스크 실행 (Overseer)
+
+- `<leader>or` - 템플릿 실행(예: npm run)
+- `<leader>oo` - Overseer 패널 토글
+- `<leader>ol` - 태스크 로드
+
+## 🌿 Git (Gitsigns / Diffview)
+
+- `]h` / `[h` - 다음/이전 헝크로 이동
+- `<leader>hs` - 헝크 stage
+- `<leader>hr` - 헝크 reset
+- `<leader>hp` - 헝크 미리보기
+- `<leader>hu` - stage 취소
+- `<leader>gb` - 현재 라인 blame
+- `<leader>gd` - Diffview 열기
+- `<leader>gD` - Diffview 닫기
+- `<leader>gh` - 현재 파일 히스토리
+
+## 🌐 REST 클라이언트 (rest.nvim)
+
+- `<leader>rr` - 현재 요청 실행
+- `<leader>rl` - 마지막 요청 재실행
+- `<leader>ro` - 결과 창 열기
+
+## 🗂 프로젝트 (project.nvim + Telescope)
+
+- `<leader>fp` - 프로젝트 목록(Telescope projects)
+
+## 🧭 아웃라인 (Aerial)
+
+- `<leader>so` - 문서 심볼 패널 토글
+
+## 🖥 터미널 (toggleterm)
+
+- `<leader>ot` - 터미널 토글
+- `<C-\>` - 빠른 토글 (float)
+
+## 🚨 진단 및 문제 해결 (Trouble)
+
+- `<leader>xx` - Trouble 토글
+- `<leader>xw` - 워크스페이스 진단
+- `<leader>xd` - 문서 진단
+- `<leader>xr` - LSP 참조
 
 ## ✨ 자동완성 (CMP)
 
@@ -114,7 +181,14 @@
 ### 지원 언어
 
 - HTML, CSS, JavaScript, TypeScript
-- Vue, JSON, Lua, PHP
+- Vue, JSON, Lua, PHP, SQL, YAML
+
+### 자동화 기능
+
+- **자동 괄호 쌍**: `nvim-autopairs`
+- **코드 폴딩**: `nvim-ufo`
+- **들여쓰기 가이드**: `indent-blankline.nvim`
+- **컬러 하이라이팅**: `nvim-highlight-colors`
 
 ## 📝 모드별 키맵
 
@@ -126,17 +200,23 @@
 
 - 자동완성 관련 키맵
 - 스니펫 네비게이션
+- `<C-Z>` - Undo
+- `<C-Y>` - Redo
 
 ### Visual 모드 (x)
 
 - `<F3>` - 코드 포맷팅
+- `<` / `>` - 들여쓰기 조정
 
 ## 🔧 설정 정보
 
 - **Leader 키**: 기본값 (보통 `\` 또는 `,`)
 - **LSP 자동 포맷팅**: Lua 파일에 대해 저장 시 자동 적용
-- **NeoTree**: Neovim 시작 시 자동으로 열림
+- **ESLint 자동 수정**: 저장 시 `eslint.applyAllFixes` 자동 실행
+- **NeoTree**: Neovim 시작 시 자동으로 열림 (디렉터리 인자로 시작할 때만)
 - **Git 상태**: NeoTree에서 실시간 표시
+- **테마**: Tokyo Night
+- **상태바**: Lualine (진단 정보 포함)
 
 ---
 

@@ -5,6 +5,7 @@ return {
   dependencies = {
     'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
+    'b0o/schemastore.nvim',
     -- Autocompletion
     'hrsh7th/nvim-cmp',
     'hrsh7th/cmp-buffer',
@@ -110,6 +111,8 @@ return {
         "vue_ls", -- Volar가 lspconfig에서 vue_ls로 리네임됨
         "jsonls",
         "sqlls",  -- SQL Language Server
+        "yamlls",
+        "emmet_ls",
       },
       -- v2에서는 handlers 제거됨 (직접 lspconfig.*.setup 사용)
     })
@@ -150,6 +153,44 @@ return {
         },
       },
     })
+
+    -- Emmet LS (HTML/CSS/React)
+    lspconfig.emmet_ls.setup({
+      filetypes = { 'html', 'css', 'scss', 'sass', 'javascriptreact', 'typescriptreact' },
+    })
+
+    -- TailwindCSS (유틸 클래스 인식 강화)
+    lspconfig.tailwindcss.setup({
+      settings = {
+        tailwindCSS = {
+          experimental = {
+            -- Lua 이스케이프를 피하기 위해 장문자열 사용
+            classRegex = {
+              { [[tw`([^`]*)`]],  [[tw\("([^"]*)"\)]] },
+              { [[cn\(([^)]*)\)]] },
+            },
+          },
+        },
+      },
+    })
+
+    -- JSON/YAML SchemaStore 연동
+    local has_s, schemastore = pcall(require, 'schemastore')
+    if has_s then
+      lspconfig.jsonls.setup({
+        settings = {
+          json = {
+            schemas = schemastore.json.schemas(),
+            validate = { enable = true },
+          },
+        },
+      })
+      if lspconfig.yamlls then
+        lspconfig.yamlls.setup({
+          settings = { yaml = { schemas = schemastore.yaml.schemas() } },
+        })
+      end
+    end
 
     -- ESLint: 저장 시 Fix (공식 LSP executeCommand 사용)
     -- 참고: eslint.applyAllFixes via workspace/executeCommand
