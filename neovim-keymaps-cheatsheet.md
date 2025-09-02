@@ -26,8 +26,26 @@
 
 - `<leader>ff` - 파일 찾기
 - `<leader>fg` - 라이브 검색 (내용 기반)
-- `<leader>fb` - 버퍼 찾기
+- `<leader>fb` - 버퍼 찾기 (개선된 버퍼 관리)
+  - `<C-d>` (Insert/Normal 모드) - 선택한 버퍼 삭제
+  - `dd` (Normal 모드) - 선택한 버퍼 삭제
+  - `<M-d>` (기본) - 선택한 버퍼 삭제
 - `<leader>fh` - 도움말 찾기
+
+### Telescope Git
+
+- `<leader>gl` - Git 커밋 로그 (프로젝트 전체)
+- `<leader>gL` - Git 커밋 로그 (현재 파일)
+- `<leader>gB` - Git 브랜치 목록
+- `<leader>gs` - Git 상태
+- `<leader>gS` - 최근 커밋 변경사항 보기 (플로팅 윈도우)
+- `<leader>gH` - 특정 커밋 변경사항 보기 (플로팅 윈도우, 해시 입력)
+
+### 버퍼 관리
+
+- `<leader>ba` - 모든 버퍼 닫기 (현재 버퍼 제외, 저장된 것만)
+- `<leader>bA` - 모든 버퍼 강제 닫기 (현재 버퍼 제외)
+- `<leader>bo` - 다른 모든 버퍼 닫기 (현재 버퍼만 유지)
 
 ### 기타 파일 관련
 

@@ -8,6 +8,8 @@ return {
         -- 구문 하이라이팅 활성화
         highlight = {
           enable = true,
+          -- Vue 파일에서 더 정확한 구문 하이라이팅
+          additional_vim_regex_highlighting = false,
         },
         -- 자동 들여쓰기 활성화
         indent = {
@@ -16,6 +18,7 @@ return {
         -- HTML/XML 태그 자동 완성
         autotag = {
           enable = true,
+          filetypes = { "html", "xml", "vue", "tsx", "jsx" },
         },
         -- 설치할 파서 목록
         ensure_installed = {
