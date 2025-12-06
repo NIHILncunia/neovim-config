@@ -16,17 +16,24 @@ return {
       vim.o.foldenable = true
 
       -- Neovim은 foldingRange를 기본 capabilities에 포함하지 않으므로 수동 추가 필요
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities.textDocument.foldingRange = {
-        dynamicRegistration = false,
-        lineFoldingOnly = true
-      }
-      local language_servers = vim.lsp.get_clients()
-      for _, ls in ipairs(language_servers) do
-        require('lspconfig')[ls].setup({
-          capabilities = capabilities
-        })
-      end
+      -- LspAttach 이벤트를 통해 새로 attach되는 클라이언트에 capabilities 추가
+      vim.api.nvim_create_autocmd('LspAttach', {
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if client then
+            -- foldingRange capability 추가
+            if not client.server_capabilities.textDocument then
+              client.server_capabilities.textDocument = {}
+            end
+            if not client.server_capabilities.textDocument.foldingRange then
+              client.server_capabilities.textDocument.foldingRange = {
+                dynamicRegistration = false,
+                lineFoldingOnly = true
+              }
+            end
+          end
+        end,
+      })
       require('ufo').setup()
     end
   }

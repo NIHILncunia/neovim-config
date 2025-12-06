@@ -57,14 +57,17 @@ return {
       },
     })
 
-    -- LSP 기본 capability
-    local lspconfig = require('lspconfig')
-    local lspconfig_defaults = lspconfig.util.default_config
-    lspconfig_defaults.capabilities = vim.tbl_deep_extend(
+    -- LSP 기본 capability (Neovim 0.11+ 호환)
+    local capabilities = vim.tbl_deep_extend(
       'force',
-      lspconfig_defaults.capabilities,
+      vim.lsp.protocol.make_client_capabilities(),
       require('cmp_nvim_lsp').default_capabilities()
     )
+    -- foldingRange capability 추가 (ufo.nvim을 위한 설정)
+    capabilities.textDocument.foldingRange = {
+      dynamicRegistration = false,
+      lineFoldingOnly = true
+    }
 
     -- LSP 키매핑(버퍼 로컬)
     vim.api.nvim_create_autocmd('LspAttach', {
@@ -108,7 +111,7 @@ return {
         "eslint",
         "html",
         "cssls",
-        "vue_ls", -- Volar가 lspconfig에서 vue_ls로 리네임됨
+        "vue_ls", -- Volar가 vue_ls로 이름 변경됨
         "jsonls",
         "sqlls",  -- SQL Language Server
         "yamlls",
@@ -131,9 +134,11 @@ return {
     local vue_ts_plugin_loc = vue_language_server_path()
 
     -- ===== 개별 서버 설정 =====
+    -- Neovim 0.11+ 새로운 API 사용: vim.lsp.config() + vim.lsp.enable()
 
     -- CSS/SCSS
-    lspconfig.cssls.setup({
+    vim.lsp.config('cssls', {
+      capabilities = capabilities,
       settings = {
         css  = { validate = true },
         scss = { validate = true },
@@ -142,9 +147,11 @@ return {
         -- lint = { unknownAtRules = 'ignore' },
       },
     })
+    vim.lsp.enable('cssls')
 
     -- Lua
-    lspconfig.lua_ls.setup({
+    vim.lsp.config('lua_ls', {
+      capabilities = capabilities,
       settings = {
         Lua = {
           runtime = { version = 'LuaJIT' },
@@ -153,14 +160,18 @@ return {
         },
       },
     })
+    vim.lsp.enable('lua_ls')
 
     -- Emmet LS (HTML/CSS/React)
-    lspconfig.emmet_ls.setup({
+    vim.lsp.config('emmet_ls', {
+      capabilities = capabilities,
       filetypes = { 'html', 'css', 'scss', 'sass', 'javascriptreact', 'typescriptreact' },
     })
+    vim.lsp.enable('emmet_ls')
 
     -- TailwindCSS (유틸 클래스 인식 강화)
-    lspconfig.tailwindcss.setup({
+    vim.lsp.config('tailwindcss', {
+      capabilities = capabilities,
       settings = {
         tailwindCSS = {
           experimental = {
@@ -173,11 +184,13 @@ return {
         },
       },
     })
+    vim.lsp.enable('tailwindcss')
 
     -- JSON/YAML SchemaStore 연동
     local has_s, schemastore = pcall(require, 'schemastore')
     if has_s then
-      lspconfig.jsonls.setup({
+      vim.lsp.config('jsonls', {
+        capabilities = capabilities,
         settings = {
           json = {
             schemas = schemastore.json.schemas(),
@@ -185,18 +198,21 @@ return {
           },
         },
       })
-      if lspconfig.yamlls then
-        lspconfig.yamlls.setup({
-          settings = { yaml = { schemas = schemastore.yaml.schemas() } },
-        })
-      end
+      vim.lsp.enable('jsonls')
+
+      vim.lsp.config('yamlls', {
+        capabilities = capabilities,
+        settings = { yaml = { schemas = schemastore.yaml.schemas() } },
+      })
+      vim.lsp.enable('yamlls')
     end
 
     -- ESLint: 저장 시 Fix (공식 LSP executeCommand 사용)
     -- 참고: eslint.applyAllFixes via workspace/executeCommand
     -- lspconfig 최신 설정과 VSCode ESLint의 codeActionsOnSave(source.fixAll.eslint)에 해당
     -- refs: nvim-lspconfig eslint config, VSCode ESLint docs
-    lspconfig.eslint.setup({
+    vim.lsp.config('eslint', {
+      capabilities = capabilities,
       settings = { workingDirectory = { mode = "auto" } },
       flags = { debounce_text_changes = 150 },
       on_attach = function(client, bufnr)
@@ -227,11 +243,16 @@ return {
         })
       end,
     })
+    vim.lsp.enable('eslint')
 
     -- Vue 하이브리드: vue_ls + ts_ls(+ @vue/typescript-plugin)
-    lspconfig.vue_ls.setup({}) -- 템플릿/스타일 등 SFC 전반
+    vim.lsp.config('vue_ls', {
+      capabilities = capabilities,
+    }) -- 템플릿/스타일 등 SFC 전반
+    vim.lsp.enable('vue_ls')
 
-    lspconfig.ts_ls.setup({
+    vim.lsp.config('ts_ls', {
+      capabilities = capabilities,
       init_options = {
         plugins = {
           {
@@ -244,6 +265,7 @@ return {
       },
       filetypes = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'vue' },
     })
+    vim.lsp.enable('ts_ls')
     -- (원하시면 vtsls로 교체 가능합니다)
 
     -- nvim-cmp
