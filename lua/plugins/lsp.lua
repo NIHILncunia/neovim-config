@@ -116,6 +116,8 @@ return {
         "sqlls",  -- SQL Language Server
         "yamlls",
         "emmet_ls",
+        "jdtls",  -- Java Language Server (Spring Boot 지원)
+        "pyright", -- Python Language Server
       },
       -- v2에서는 handlers 제거됨 (직접 lspconfig.*.setup 사용)
     })
@@ -267,6 +269,28 @@ return {
     })
     vim.lsp.enable('ts_ls')
     -- (원하시면 vtsls로 교체 가능합니다)
+
+    -- Java (jdtls) - Spring Boot 지원
+    vim.lsp.config('jdtls', {
+      capabilities = capabilities,
+      -- Maven/Gradle 프로젝트 자동 인식
+      -- Spring Boot 애노테이션 및 의존성 인식
+    })
+    vim.lsp.enable('jdtls')
+
+    -- Python (pyright)
+    vim.lsp.config('pyright', {
+      capabilities = capabilities,
+      settings = {
+        python = {
+          analysis = {
+            typeCheckingMode = "basic",
+            autoImportCompletions = true,
+          },
+        },
+      },
+    })
+    vim.lsp.enable('pyright')
 
     -- nvim-cmp
     local cmp = require('cmp')
