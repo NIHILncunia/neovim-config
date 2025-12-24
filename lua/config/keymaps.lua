@@ -28,6 +28,15 @@ mapKey("<leader>h", "<cmd>nohlsearch<cr>") -- 검색 하이라이트 제거
 mapKey('<', '<gv', 'v')
 mapKey('>', '>gv', 'v')
 
+-- 텍스트 선택 관련 (기본 기능 + 편의 키매핑)
+-- 라인 전체 선택: V (Visual Line 모드)
+-- 여러 줄 선택: V 후 j/k로 확장
+-- 이전 선택 영역 다시 선택: gv
+
+-- 복사 (Visual 모드)
+mapKey('<leader>y', '"+y', 'v', '시스템 클립보드로 복사')
+mapKey('<leader>Y', '"+Y', 'v', '시스템 클립보드로 복사 (라인)')
+
 -- 버퍼 관리
 mapKey('<leader>ba', function()
   -- 모든 버퍼 닫기 (현재 버퍼 제외)
